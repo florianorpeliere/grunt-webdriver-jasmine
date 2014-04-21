@@ -4,8 +4,6 @@
 
 This plugin is based on [grunt-webdriver](https://github.com/webdriverjs/grunt-webdriver) and [grunt-jasmine-node](https://github.com/jasmine-contrib/grunt-jasmine-node).
 
-https://github.com/jasmine-contrib/grunt-jasmine-node
-
 ## Getting Started
 This plugin requires Grunt `~0.4.0`
 
