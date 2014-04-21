@@ -24,34 +24,29 @@ module.exports = function(grunt) {
             base = process.cwd(),
             testSuite = require('jasmine-node'),
             options = this.options({
-                reporter: 'spec',
-                ui: 'bdd',
-                slow: 75,
-                bail: false,
-                grep: null,
-                timeout: 1000000,
+                // task options
                 updateSauceJob: false,
                 output: null,
                 quiet: false,
                 nospawn: false,
-                jasmineOptions: {
-                    projectRoot: '',
-                    match: '.',
-                    matchall: false,
-                    specNameMatcher: 'spec',
-                    helperNameMatcher: 'helpers',
-                    extensions: 'js',
-                    showColors: true,
-                    includeStackTrace: true,
-                    useHelpers: false,
-                    verbose: false,
-                    jUnit: {
-                        report: false,
-                        savePath: "./reports/",
-                        useDotNotation: true,
-                        consolidate: true
-                    }
-                },
+
+                // jasmine options
+                projectRoot: '',
+                match: '.',
+                matchall: false,
+                specNameMatcher: 'spec',
+                helperNameMatcher: 'helpers',
+                extensions: 'js',
+                showColors: true,
+                includeStackTrace: true,
+                useHelpers: false,
+                verbose: false,
+                jUnit: {
+                    report: false,
+                    savePath: "./reports/",
+                    useDotNotation: true,
+                    consolidate: true
+                }
             }),
             capabilities = deepmerge(options,this.data.options || {}),
             tunnelIdentifier = options['tunnel-identifier'] || (capabilities.desiredCapabilities ? capabilities.desiredCapabilities['tunnel-identifier'] : null) || null,
@@ -78,26 +73,26 @@ module.exports = function(grunt) {
 
         // Config jasmine options
         var jasmineOptions = capabilities.jasmineOptions;
-        jasmineOptions.specFolders = specFolders;
+        options.specFolders = specFolders;
 
-        if (jasmineOptions.projectRoot) {
-            jasmineOptions.specFolders.push(jasmineOptions.projectRoot);
+        if (options.projectRoot) {
+            options.specFolders.push(options.projectRoot);
         }
-        var regExpSpec = new RegExp(jasmineOptions.match + (jasmineOptions.matchall ? "" : jasmineOptions.specNameMatcher + "\\." ) + "(" + jasmineOptions.extensions + ")$", 'i');
+        var regExpSpec = new RegExp(options.match + (options.matchall ? "" : options.specNameMatcher + "\\." ) + "(" + options.extensions + ")$", 'i');
 
-        if (jasmineOptions.useHelpers) {
+        if (options.useHelpers) {
             this.filesSrc.forEach(function(path) {
-                testSuite.loadHelpersInFolder(path, new RegExp(jasmineOptions.helperNameMatcher + "?\\.(" + jasmineOptions.extensions + ")$", 'i'));
+                testSuite.loadHelpersInFolder(path, new RegExp(options.helperNameMatcher + "?\\.(" + options.extensions + ")$", 'i'));
             });
         }
 
         jasmineOptions = {
-            specFolders: jasmineOptions.specFolders,
-            isVerbose: grunt.verbose ? true : jasmineOptions.verbose,
-            showColors: jasmineOptions.showColors,
+            specFolders: options.specFolders,
+            isVerbose: grunt.verbose ? true : options.verbose,
+            showColors: options.showColors,
             regExpSpec: regExpSpec,
-            junitreport: jasmineOptions.jUnit,
-            includeStackTrace: jasmineOptions.includeStackTrace
+            junitreport: options.jUnit,
+            includeStackTrace: options.includeStackTrace
         };
 
         /**
@@ -141,7 +136,6 @@ module.exports = function(grunt) {
         var uncaughtExceptionHandlers = process.listeners('uncaughtException');
         process.removeAllListeners('uncaughtException');
 
-        /*istanbul ignore next*/
         var unmanageExceptions = function() {
             uncaughtExceptionHandlers.forEach(process.on.bind(process, 'uncaughtException'));
         };
@@ -154,7 +148,7 @@ module.exports = function(grunt) {
             tunnel.on('verbose:debug', grunt.log.debug);
         }
 
-        // Clear require cache to allow for multiple execution of same mocha commands
+        // Clear require cache to allow for multiple execution of same jasmine commands
         Object.keys(require.cache).forEach(function (key) {
             delete require.cache[key];
         });
@@ -174,7 +168,7 @@ module.exports = function(grunt) {
             function(callback) {
 
                 if(tunnel) {
-                    return callback(null);
+                    return callback();
                 }
 
                 var options = {
@@ -185,9 +179,9 @@ module.exports = function(grunt) {
 
                 http.get(options, function() {
                     isSeleniumServerRunning = true;
-                    callback(null);
+                    callback();
                 }).on('error', function() {
-                    callback(null);
+                    callback();
                 });
 
             },
@@ -246,7 +240,7 @@ module.exports = function(grunt) {
 
                     grunt.log.debug('tunnel created successfully');
                     isSauceTunnelRunning = true;
-                    callback(null);
+                    callback();
 
                 } else if(server && !isSeleniumServerRunning && !options.nospawn) {
 
@@ -257,12 +251,12 @@ module.exports = function(grunt) {
                         grunt.log.debug('selenium server started successfully');
                         isSeleniumServerRunning = true;
                         server.stdout.removeAllListeners('data');
-                        callback(null);
+                        callback();
                     }
 
                 } else {
 
-                    callback(null);
+                    callback();
 
                 }
 
@@ -289,12 +283,12 @@ module.exports = function(grunt) {
                     callback(null, runner.results( ).failedCount);
                 };
 
-                jasmineOptions.onComplete = onJasmineComplete;
+                options.onComplete = onJasmineComplete;
 
                 // for jasmine-node 1.3
                 testSuite.executeSpecsInFolder(jasmineOptions);
                 // for jasmine-node 2
-                // jasmineOptions.watchFolders = [ ];
+                // options.watchFolders = [ ];
                 // testSuite.run( jasmineOptions );
             },
 

@@ -96,91 +96,97 @@ options [here](https://github.com/camme/webdriverjs/#options). You can overwrite
 options in any target. Also you have to define all Jasmine options inside jasmineOptions parameter. The following
 are supported:
 
-#### bail
-Type: `Boolean`<br>
-Default: *false*<br>
+#### task specific options
 
-If true you are only interested in the first execption
-
-#### ui
-Type: `String`<br>
-Default: *bdd*<br>
-Options: *bdd* | *tdd* | *qunit* | *exports*
-
-Specify the interface to use.
-
-#### reporter
-Type: `String`<br>
-Default: *spec*<br>
-Options: *Base* | *Dot* | *Doc* | *TAP* | *JSON* | *HTML* | *List* | *Min* | *Spec* | *Nyan* | *XUnit* | *Markdown* | *Progress* | *Landing* | *JSONCov* | *HTMLCov* | *JSONStream*
-
-Allows you to specify the reporter that will be used.
-
-#### slow
-Type: `Number`<br>
-Default: *75*
-
-Specify the "slow" test threshold, defaulting to 75ms. Mocha uses this to highlight test-cases that are taking too long.
-
-#### timeout
-Type: `Number`<br>
-Default: *1000000*
-
-Specifies the test-case timeout.
-
-#### grep
-Type: `String`
-
-When specified will trigger mocha to only run tests matching the given pattern which is internally compiled to a `RegExp`.
-
-#### updateSauceJob
+##### updateSauceJob
 Type: `Boolean`<br>
 Default: *false*
 
 If true it will automatically update the current job and does publish it.
 
-#### output
+##### output
 Type: `String`
 Default: *null*
 
 If set grunt-webdriver-jasmine will pipe reporter output into given file path
 
-#### quiet
+##### quiet
 Type: `Boolean`
 Default: *false*
 
 If true it prevents the original process.stdout.write from executing - no output at all
 
-#### nospawn
+##### nospawn
 Type: `Boolean`<br>
 Default: *false*
 
-If true it will not spawn a new selenium server process (useful if you use Sauce Labs without Sauce Tunnel)
+If true it will not spawn a new selenium server process (useful when using Sauce Labs)
 
-#### jasmineOptions
-Type: `Object`<br>
+#### jasmine specific options
 
-Default options are:
+##### match
+Type: `String`<br>
+Default: *.*
 
-```javascript
+Match only specs containing "REGEXPspec"
+
+##### matchall
+Type: `Boolean`<br>
+Default: *false*
+
+Relax requirement of "spec" in spec file names
+
+##### specNameMatcher
+Type: `String`<br>
+Default: *spec*
+
+Name of spec directory
+
+##### helperNameMatcher
+Type: `String`<br>
+Default: *helpers*
+
+Name of helper directory
+
+##### showColors
+Type: `Boolean`
+Default: *true*
+
+Indicates spec output should uses color to indicates passing (green) or failing (red) specs
+
+##### includeStackTrace
+Type: `Boolean`
+Default: *true*
+
+Indicates if the stack trace will be generated from a test failure
+
+##### useHelpers
+Type: `Boolean`
+Default: *false*
+
+If `true` task will try to load helper files
+
+##### verbose
+Type: `Boolean`
+Default: *false*
+
+Verbose output as the specs are running
+
+##### jUnit
+
+Type: `Object`
+Default:
+
+```
 {
-  match: '.',
-  matchall: false,
-  specNameMatcher: 'spec',
-  helperNameMatcher: 'helpers',
-  extensions: 'js',
-  showColors: true,
-  includeStackTrace: true,
-  useHelpers: false,
-  jUnit: {
     report: false,
     savePath : "./reports/",
     useDotNotation: true,
     consolidate: true
-  },
-  verbose: false
 }
 ```
+
+export tests results as junitreport xml format
 
 ### Usage Examples
 
@@ -229,4 +235,4 @@ Please fork, add specs, and send pull requests! In lieu of a formal styleguide, 
 maintain the existing coding style.
 
 ## Release History
-* 2014-04-21   v0.5.0   first working version, based on grunt-webdriver and grunt-jasmine-node
+* 2014-04-21   v0.1.0   first working version, based on grunt-webdriver and grunt-jasmine-node
