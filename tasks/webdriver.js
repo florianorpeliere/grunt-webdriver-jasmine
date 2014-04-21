@@ -69,11 +69,12 @@ module.exports = function(grunt) {
         /**
          * initialize Jasmine test suite
          */
+		grunt.file.setBase(base);
 		var specFolders = grunt.file.expand({
 			filter: function( filepath ) {
 			  return grunt.file.isDir( filepath );
 			}
-		}, base + '/' + this.data.tests);
+		}, this.data.tests);
 
 		// Config jasmine options
 		var jasmineOptions = capabilities.jasmineOptions;
