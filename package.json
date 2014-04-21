@@ -1,8 +1,8 @@
 {
-  "name": "grunt-webdriver",
-  "description": "grunt-webdriver is a grunt plugin to run selenium tests with Mocha and WebdriverJS",
+  "name": "grunt-webdriver-jasmine",
+  "description": "grunt-webdriver is a grunt plugin to run selenium tests with Jasmine and WebdriverJS",
   "version": "0.4.0",
-  "homepage": "https://github.com/webdriverjs/grunt-webdriver",
+  "homepage": "https://github.com/webdriverjs/grunt-webdriver-jasmine",
   "author": {
     "name": "Christian Bromann",
     "email": "contact@christian-bromann.com",
@@ -10,15 +10,15 @@
   },
   "repository": {
     "type": "git",
-    "url": "git://github.com/webdriverjs/grunt-webdriver.git"
+    "url": "git://github.com/webdriverjs/grunt-webdriver-jasmine.git"
   },
   "bugs": {
-    "url": "https://github.com/webdriverjs/grunt-webdriver/issues"
+    "url": "https://github.com/webdriverjs/grunt-webdriver-jasmine/issues"
   },
   "licenses": [
     {
       "type": "MIT",
-      "url": "https://github.com/webdriverjs/grunt-webdriver/blob/master/LICENSE-MIT"
+      "url": "https://github.com/webdriverjs/grunt-webdriver-jasmine/blob/master/LICENSE-MIT"
     }
   ],
   "main": "Gruntfile.js",
@@ -31,7 +31,7 @@
   },
   "dependencies": {
     "async": "~0.2.10",
-    "mocha": "~1.18.0",
+    "jasmine-node": "~1.14.3",
     "webdriverjs": "~1.5.x",
     "saucelabs": "~0.1.1",
     "sauce-tunnel": "~2.0.1",
@@ -53,7 +53,7 @@
     "webdriverjs",
     "webdriver",
     "selenium",
-    "mocha",
+    "jasmine",
     "bdd",
     "tdd",
     "saucelabs",

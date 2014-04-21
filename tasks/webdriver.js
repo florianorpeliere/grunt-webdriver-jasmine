@@ -17,13 +17,12 @@ var SauceLabs     = require('saucelabs'),
 
 module.exports = function(grunt) {
 
-    grunt.registerMultiTask('webdriver', 'run WebdriverJS tests', function() {
+    grunt.registerMultiTask('webdriver-jasmine', 'run WebdriverJS tests', function() {
 
         var that = this,
             done = this.async(),
             base = process.cwd(),
-            testSuiteType = 'mocha',
-            testSuite = null,
+			testSuite = require('jasmine-node'),
             options = this.options({
                 reporter: 'spec',
                 ui: 'bdd',
@@ -35,9 +34,24 @@ module.exports = function(grunt) {
                 output: null,
                 quiet: false,
                 nospawn: false,
-                testSuite: {
-                    type: testSuiteType
-                },
+                jasmineOptions: {
+					projectRoot: '',
+					match: '.',
+					matchall: false,
+					specNameMatcher: 'spec',
+					helperNameMatcher: 'helpers',
+					extensions: 'js',
+					showColors: true,
+					includeStackTrace: true,
+					useHelpers: false,
+					verbose: false,
+					jUnit: {
+						report: false,
+						savePath: "./reports/",
+						useDotNotation: true,
+						consolidate: true
+					}
+				},
             }),
             capabilities = deepmerge(options,this.data.options || {}),
             tunnelIdentifier = options['tunnel-identifier'] || (capabilities.desiredCapabilities ? capabilities.desiredCapabilities['tunnel-identifier'] : null) || null,
@@ -53,73 +67,37 @@ module.exports = function(grunt) {
         GLOBAL.browser = webdriverjs.remote(capabilities);
 
         /**
-         * initialize test suite
+         * initialize Jasmine test suite
          */
-        if ( capabilities.hasOwnProperty( 'testSuite' ) && capabilities.testSuite.type === 'jasmine' ) {
-            // Jasmine
-            testSuiteType = 'jasmine';
-            testSuite = require('jasmine-node');
-            var specFolders = grunt.file.expand({
-                filter: function( filepath ) {
-                  return grunt.file.isDir( filepath );
-                }
-            }, base + '/' + this.data.tests);
+		var specFolders = grunt.file.expand({
+			filter: function( filepath ) {
+			  return grunt.file.isDir( filepath );
+			}
+		}, base + '/' + this.data.tests);
 
-            // Config jasmine options
-            var jasmineOptions = {
-                specFolders: specFolders,
-                projectRoot: '',
-                match: '.',
-                matchall: false,
-                specNameMatcher: 'spec',
-                helperNameMatcher: 'helpers',
-                extensions: 'js',
-                showColors: true,
-                includeStackTrace: true,
-                useHelpers: false,
-                    teamcity: false,
-                verbose: false,
-                jUnit: {
-                    report: false,
-                    savePath: "./reports/",
-                    useDotNotation: true,
-                    consolidate: true
-                },
-                growl: false
-            };
-            jasmineOptions = deepmerge(jasmineOptions, capabilities.testSuite.args || {});
+		// Config jasmine options
+		var jasmineOptions = capabilities.jasmineOptions;
+		jasmineOptions.specFolders = specFolders;
 
-            if (jasmineOptions.projectRoot) {
-                jasmineOptions.specFolders.push(jasmineOptions.projectRoot);
-            }
-            var regExpSpec = new RegExp(jasmineOptions.match + (jasmineOptions.matchall ? "" : jasmineOptions.specNameMatcher + "\\." ) + "(" + jasmineOptions.extensions + ")$", 'i');
-
-            if (jasmineOptions.useHelpers) {
-                this.filesSrc.forEach(function(path) {
-                    testSuite.loadHelpersInFolder(path, new RegExp(jasmineOptions.helperNameMatcher + "?\\.(" + jasmineOptions.extensions + ")$", 'i'));
-                });
-            }
-
-            jasmineOptions = {
-                specFolders: jasmineOptions.specFolders,
-                isVerbose: grunt.verbose ? true : jasmineOptions.verbose,
-                showColors: jasmineOptions.showColors,
-                teamcity: jasmineOptions.teamcity,
-                useRequireJs: jasmineOptions.useRequireJs,
-                regExpSpec: regExpSpec,
-                junitreport: jasmineOptions.jUnit,
-                includeStackTrace: jasmineOptions.includeStackTrace,
-                growl: jasmineOptions.growl
-            };
-        } else {
-            // Mocha
-            var Mocha = require('mocha');
-            testSuite = new Mocha(options);
-
-            grunt.file.expand(grunt.file.expand(base + '/' + this.data.tests)).forEach(function(file) {
-                testSuite.addFile(file);
-            });
+		if (jasmineOptions.projectRoot) {
+			jasmineOptions.specFolders.push(jasmineOptions.projectRoot);
 		}
+		var regExpSpec = new RegExp(jasmineOptions.match + (jasmineOptions.matchall ? "" : jasmineOptions.specNameMatcher + "\\." ) + "(" + jasmineOptions.extensions + ")$", 'i');
+
+		if (jasmineOptions.useHelpers) {
+			this.filesSrc.forEach(function(path) {
+				testSuite.loadHelpersInFolder(path, new RegExp(jasmineOptions.helperNameMatcher + "?\\.(" + jasmineOptions.extensions + ")$", 'i'));
+			});
+		}
+
+		jasmineOptions = {
+			specFolders: jasmineOptions.specFolders,
+			isVerbose: grunt.verbose ? true : jasmineOptions.verbose,
+			showColors: jasmineOptions.showColors,
+			regExpSpec: regExpSpec,
+			junitreport: jasmineOptions.jUnit,
+			includeStackTrace: jasmineOptions.includeStackTrace
+		};
 
         /**
          * hook process.stdout.write to save reporter output into file
@@ -302,26 +280,21 @@ module.exports = function(grunt) {
              * run tests
              */
             function(args,callback) {
-                grunt.log.debug('run tests with ' + testSuiteType);
+                grunt.log.debug('run tests with jasmine');
 
-                if (testSuiteType === 'jasmine') {
-                    // jasmine
-                    var onJasmineComplete = function(runner, log) {
-                        testSuite.getGlobal( ).jasmine.currentEnv_ = undefined;
-                        callback(null, runner.results( ).failedCount);
-                    };
+				// jasmine
+				var onJasmineComplete = function(runner, log) {
+					testSuite.getGlobal( ).jasmine.currentEnv_ = undefined;
+					callback(null, runner.results( ).failedCount);
+				};
 
-                    jasmineOptions.onComplete = onJasmineComplete;
+				jasmineOptions.onComplete = onJasmineComplete;
 
-                    // for jasmine-node 1.3
-                    testSuite.executeSpecsInFolder(jasmineOptions);
-                    // for jasmine-node 2
-                    // jasmineOptions.watchFolders = [ ];
-                    // testSuite.run( jasmineOptions );
-                } else {
-                    // mocha
-                    testSuite.run(next.bind(callback));
-                }
+				// for jasmine-node 1.3
+				testSuite.executeSpecsInFolder(jasmineOptions);
+				// for jasmine-node 2
+				// jasmineOptions.watchFolders = [ ];
+				// testSuite.run( jasmineOptions );
             },
 
             /**
