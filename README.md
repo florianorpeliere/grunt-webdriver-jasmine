@@ -140,13 +140,13 @@ Relax requirement of "spec" in spec file names
 Type: `String`<br>
 Default: *spec*
 
-Name of spec directory
+Will only load spec files with name finishing with given matcher
 
 ##### helperNameMatcher
 Type: `String`<br>
 Default: *helpers*
 
-Name of helper directory
+Will only load helper files with name finishing with given matcher
 
 ##### showColors
 Type: `Boolean`
