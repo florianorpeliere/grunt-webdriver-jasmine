@@ -272,7 +272,7 @@ module.exports = function(grunt) {
                 // jasmine
                 var onJasmineComplete = function(runner, log) {
                     testSuite.getGlobal( ).jasmine.currentEnv_ = undefined;
-                    callback(null, runner.results( ).failedCount);
+                    callback(null, runner.results().failedCount);
                 };
 
                 options.onComplete = onJasmineComplete;
