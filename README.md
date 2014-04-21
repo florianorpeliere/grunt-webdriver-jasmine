@@ -1,6 +1,10 @@
-# grunt-webdriver-jasmine [![Build Status](https://travis-ci.org/webdriverjs/grunt-webdriver.png)](https://travis-ci.org/christian-bromann/grunt-webdriver)
+# grunt-webdriver-jasmine
 
-> grunt-webdriver is a grunt plugin to run selenium tests with Mocha and [WebdriverJS](http://webdriver.io)
+> grunt-webdriver-jasmine is a grunt plugin to run selenium tests with Jasmine and [WebdriverJS](http://webdriver.io)
+
+This plugin is based on [grunt-webdriver](https://github.com/webdriverjs/grunt-webdriver) and [grunt-jasmine-node](https://github.com/jasmine-contrib/grunt-jasmine-node).
+
+https://github.com/jasmine-contrib/grunt-jasmine-node
 
 ## Getting Started
 This plugin requires Grunt `~0.4.0`
@@ -12,27 +16,27 @@ install and use Grunt plugins. Once you're familiar with that process, you may
 install this plugin with this command:
 
 ```shell
-npm install grunt-webdriver --save-dev
+npm install grunt-webdriver-jasmine --save-dev
 ```
 
 One the plugin has been installed, it may be enabled inside your Gruntfile
 with this line of JavaScript:
 
 ```js
-grunt.loadNpmTasks('grunt-webdriver');
+grunt.loadNpmTasks('grunt-webdriver-jasmine');
 ```
 
-## The "webdriver" task
+## The "webdriver-jasmine" task
 
 ### Overview
-In your project's Gruntfile, add a section named `webdriver` to the data
+In your project's Gruntfile, add a section named `webdriver-jasmine` to the data
 object passed into `grunt.initConfig()`.
 
-_Run this task with the `grunt webdriver` command._
+_Run this task with the `grunt webdriver-jasmine` command._
 
 ```js
 grunt.initConfig({
-  webdriver: {
+  'webdriver-jasmine': {
     options: {
         desiredCapabilities: {
             browserName: 'chrome'
@@ -91,7 +95,7 @@ grunt.initConfig({
 All options get passed into the WebdriverJS `remote` function. So this is the place where
 you can define your driver instance. You'll find more informations about all WebdriverJS
 options [here](https://github.com/camme/webdriverjs/#options). You can overwrite these
-options in any target. Also you have to define all Mocha options here. The following
+options in any target. Also you have to define all Jasmine options inside jasmineOptions parameter. The following
 are supported:
 
 #### bail
@@ -141,7 +145,7 @@ If true it will automatically update the current job and does publish it.
 Type: `String`
 Default: *null*
 
-If set grunt-webdriver will pipe reporter output into given file path
+If set grunt-webdriver-jasmine will pipe reporter output into given file path
 
 #### quiet
 Type: `Boolean`
@@ -154,6 +158,31 @@ Type: `Boolean`<br>
 Default: *false*
 
 If true it will not spawn a new selenium server process (useful if you use Sauce Labs without Sauce Tunnel)
+
+#### jasmineOptions
+Type: `Object`<br>
+
+Default options are:
+
+```javascript
+{
+  match: '.',
+  matchall: false,
+  specNameMatcher: 'spec',
+  helperNameMatcher: 'helpers',
+  extensions: 'js',
+  showColors: true,
+  includeStackTrace: true,
+  useHelpers: false,
+  jUnit: {
+    report: false,
+    savePath : "./reports/",
+    useDotNotation: true,
+    consolidate: true
+  },
+  verbose: false
+}
+```
 
 ### Usage Examples
 
@@ -172,13 +201,11 @@ grunt.initConfig({
 ```
 
 The corresponding *Hello World* test script is using WebdriverJS API to search the
-grunt-webdriver repository on GitHub. The global `browser` variable lets you access
+grunt-webdriver-jasmine repository on GitHub. The global `browser` variable lets you access
 your client instance. See more functions and test examples in the [WebdriverJS](https://github.com/Camme/webdriverjs) repository.
 
 ```js
 'use strict';
-
-var assert = require('assert');
 
 describe('grunt-webdriverjs test', function () {
 
@@ -189,7 +216,8 @@ describe('grunt-webdriverjs test', function () {
             .setValue('#js-command-bar-field','grunt-webdriver')
             .submitForm('.command-bar-form')
             .getTitle(function(err,title) {
-                assert(title.indexOf('grunt-webdriver') !== -1);
+				expect(title.indexOf('grunt-webdriver')).not.toBe(-1);
+				expect(err).toBe(null);
             })
             .end(done);
 
@@ -203,15 +231,4 @@ Please fork, add specs, and send pull requests! In lieu of a formal styleguide, 
 maintain the existing coding style.
 
 ## Release History
-* 2013-03-13   v0.1.1   first working version, without special features
-* 2013-03-14   v0.1.2   bugfixing, enhanced task option, improved test case
-* 2013-03-15   v0.1.3   added support for phantomjs, implemented reporter option
-* 2013-03-16   v0.1.4   save result of busterjs reporters to a file, use travis for CI testing
-* 2013-03-16   v0.1.5   added support for setUp function
-* 2013-03-16   v0.1.6   fixed webdriverjs version
-* 2014-02-01   v0.2.0   rewrote plugin, replaced BusterJS with Mocha
-* 2014-03-13   v0.3.0   support Sauce Connect
-* 2014-03-16   v0.3.1   start selenium server and Sauce Connect tunnel only once
-* 2014-03-22   v0.3.2   make task work with absolute minimum required options - closes [#11](https://github.com/webdriverjs/grunt-webdriver/issues/11)
-* 2014-03-13   v0.3.3   updated version of WebdriverJS
-* 2014-03-13   v0.4.0   pipe reporter output into file, expose flag to prevent spawing of selenium process
+* 2014-04-21   v0.1.0   first working version, based on grunt-webdriver and grunt-jasmine-node
