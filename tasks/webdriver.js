@@ -22,7 +22,7 @@ module.exports = function(grunt) {
         var that = this,
             done = this.async(),
             base = process.cwd(),
-			testSuite = require('jasmine-node'),
+            testSuite = require('jasmine-node'),
             options = this.options({
                 reporter: 'spec',
                 ui: 'bdd',
@@ -35,23 +35,23 @@ module.exports = function(grunt) {
                 quiet: false,
                 nospawn: false,
                 jasmineOptions: {
-					projectRoot: '',
-					match: '.',
-					matchall: false,
-					specNameMatcher: 'spec',
-					helperNameMatcher: 'helpers',
-					extensions: 'js',
-					showColors: true,
-					includeStackTrace: true,
-					useHelpers: false,
-					verbose: false,
-					jUnit: {
-						report: false,
-						savePath: "./reports/",
-						useDotNotation: true,
-						consolidate: true
-					}
-				},
+                    projectRoot: '',
+                    match: '.',
+                    matchall: false,
+                    specNameMatcher: 'spec',
+                    helperNameMatcher: 'helpers',
+                    extensions: 'js',
+                    showColors: true,
+                    includeStackTrace: true,
+                    useHelpers: false,
+                    verbose: false,
+                    jUnit: {
+                        report: false,
+                        savePath: "./reports/",
+                        useDotNotation: true,
+                        consolidate: true
+                    }
+                },
             }),
             capabilities = deepmerge(options,this.data.options || {}),
             tunnelIdentifier = options['tunnel-identifier'] || (capabilities.desiredCapabilities ? capabilities.desiredCapabilities['tunnel-identifier'] : null) || null,
@@ -69,36 +69,36 @@ module.exports = function(grunt) {
         /**
          * initialize Jasmine test suite
          */
-		grunt.file.setBase(base);
-		var specFolders = grunt.file.expand({
-			filter: function( filepath ) {
-			  return grunt.file.isDir( filepath );
-			}
-		}, this.data.tests);
+        grunt.file.setBase(base);
+        var specFolders = grunt.file.expand({
+            filter: function( filepath ) {
+              return grunt.file.isDir( filepath );
+            }
+        }, this.data.tests);
 
-		// Config jasmine options
-		var jasmineOptions = capabilities.jasmineOptions;
-		jasmineOptions.specFolders = specFolders;
+        // Config jasmine options
+        var jasmineOptions = capabilities.jasmineOptions;
+        jasmineOptions.specFolders = specFolders;
 
-		if (jasmineOptions.projectRoot) {
-			jasmineOptions.specFolders.push(jasmineOptions.projectRoot);
-		}
-		var regExpSpec = new RegExp(jasmineOptions.match + (jasmineOptions.matchall ? "" : jasmineOptions.specNameMatcher + "\\." ) + "(" + jasmineOptions.extensions + ")$", 'i');
+        if (jasmineOptions.projectRoot) {
+            jasmineOptions.specFolders.push(jasmineOptions.projectRoot);
+        }
+        var regExpSpec = new RegExp(jasmineOptions.match + (jasmineOptions.matchall ? "" : jasmineOptions.specNameMatcher + "\\." ) + "(" + jasmineOptions.extensions + ")$", 'i');
 
-		if (jasmineOptions.useHelpers) {
-			this.filesSrc.forEach(function(path) {
-				testSuite.loadHelpersInFolder(path, new RegExp(jasmineOptions.helperNameMatcher + "?\\.(" + jasmineOptions.extensions + ")$", 'i'));
-			});
-		}
+        if (jasmineOptions.useHelpers) {
+            this.filesSrc.forEach(function(path) {
+                testSuite.loadHelpersInFolder(path, new RegExp(jasmineOptions.helperNameMatcher + "?\\.(" + jasmineOptions.extensions + ")$", 'i'));
+            });
+        }
 
-		jasmineOptions = {
-			specFolders: jasmineOptions.specFolders,
-			isVerbose: grunt.verbose ? true : jasmineOptions.verbose,
-			showColors: jasmineOptions.showColors,
-			regExpSpec: regExpSpec,
-			junitreport: jasmineOptions.jUnit,
-			includeStackTrace: jasmineOptions.includeStackTrace
-		};
+        jasmineOptions = {
+            specFolders: jasmineOptions.specFolders,
+            isVerbose: grunt.verbose ? true : jasmineOptions.verbose,
+            showColors: jasmineOptions.showColors,
+            regExpSpec: regExpSpec,
+            junitreport: jasmineOptions.jUnit,
+            includeStackTrace: jasmineOptions.includeStackTrace
+        };
 
         /**
          * hook process.stdout.write to save reporter output into file
@@ -236,7 +236,7 @@ module.exports = function(grunt) {
              * check if server is ready
              */
             function(output,callback) {
-                
+
                 if(tunnel && !isSauceTunnelRunning) {
 
                     // output here means if tunnel was created successfully
@@ -283,19 +283,19 @@ module.exports = function(grunt) {
             function(args,callback) {
                 grunt.log.debug('run tests with jasmine');
 
-				// jasmine
-				var onJasmineComplete = function(runner, log) {
-					testSuite.getGlobal( ).jasmine.currentEnv_ = undefined;
-					callback(null, runner.results( ).failedCount);
-				};
+                // jasmine
+                var onJasmineComplete = function(runner, log) {
+                    testSuite.getGlobal( ).jasmine.currentEnv_ = undefined;
+                    callback(null, runner.results( ).failedCount);
+                };
 
-				jasmineOptions.onComplete = onJasmineComplete;
+                jasmineOptions.onComplete = onJasmineComplete;
 
-				// for jasmine-node 1.3
-				testSuite.executeSpecsInFolder(jasmineOptions);
-				// for jasmine-node 2
-				// jasmineOptions.watchFolders = [ ];
-				// testSuite.run( jasmineOptions );
+                // for jasmine-node 1.3
+                testSuite.executeSpecsInFolder(jasmineOptions);
+                // for jasmine-node 2
+                // jasmineOptions.watchFolders = [ ];
+                // testSuite.run( jasmineOptions );
             },
 
             /**
