@@ -229,4 +229,4 @@ Please fork, add specs, and send pull requests! In lieu of a formal styleguide, 
 maintain the existing coding style.
 
 ## Release History
-* 2014-04-21   v0.1.0   first working version, based on grunt-webdriver and grunt-jasmine-node
+* 2014-04-21   v0.5.0   first working version, based on grunt-webdriver and grunt-jasmine-node
