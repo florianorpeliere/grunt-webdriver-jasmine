@@ -2,17 +2,19 @@ module.exports = function(grunt) {
 
     // Project configuration.
     grunt.initConfig({
-        
+
         // Configuration to be run (and then tested).
-        webdriver: {
+        webdriver_jasmine: {
             options: {
                 updateSauceJob: true,
                 user: process.env.SAUCE_USERNAME,
                 key: process.env.SAUCE_ACCESS_KEY,
-                logLevel: 'verbose'
+                logLevel: 'verbose',
+                desiredCapabilities: {
+                    browserName: 'phantomjs'
+                }
             },
             chrome_ci: {
-                tests: './test/*.js',
                 options: {
                     host: 'ondemand.saucelabs.com',
                     port: 80,
@@ -27,7 +29,6 @@ module.exports = function(grunt) {
                 }
             },
             chrome_ciTunnel: {
-                tests: './test/*.js',
                 options: {
                     port: 4445,
                     desiredCapabilities: {
@@ -41,14 +42,7 @@ module.exports = function(grunt) {
                     }
                 }
             },
-            local: {
-                tests: './test/*.js',
-                options: {
-                    desiredCapabilities: { 
-                        browserName: 'phantomjs'
-                    }
-                }
-            }
+            local: ['spec/*']
         },
 
     });
@@ -59,7 +53,7 @@ module.exports = function(grunt) {
     // By default, lint and run all tests.
     grunt.registerTask('default', ['jshint', 'webdriver']);
     // default task for testing
-    grunt.registerTask('test', ['webdriver:local']);
-    grunt.registerTask('testTravis', ['webdriver:chrome_ci' ,'webdriver:chrome_ciTunnel']);
+    grunt.registerTask('test', ['webdriver_jasmine:local']);
+    grunt.registerTask('testTravis', ['webdriver_jasmine:chrome_ci' ,'webdriver_jasmine:chrome_ciTunnel']);
 
 };

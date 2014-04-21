@@ -93,8 +93,8 @@ grunt.initConfig({
 All options get passed into the WebdriverJS `remote` function. So this is the place where
 you can define your driver instance. You'll find more informations about all WebdriverJS
 options [here](https://github.com/camme/webdriverjs/#options). You can overwrite these
-options in any target. Also you have to define all Jasmine options inside jasmineOptions parameter. The following
-are supported:
+options in any target. Additionally you can define several task and jasmine options.The
+following are supported:
 
 #### task specific options
 

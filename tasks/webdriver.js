@@ -1,23 +1,23 @@
-var SauceLabs     = require('saucelabs'),
-    SauceTunnel   = require('sauce-tunnel'),
-    selenium      = require('selenium-standalone'),
-    webdriverjs   = require('webdriverjs'),
-    util          = require('util'),
-    http          = require('http'),
-    async         = require('async'),
-    hooker        = require('hooker'),
-    path          = require('path'),
-    fs            = require('fs-extra'),
-    deepmerge     = require('deepmerge'),
-    server = null,
-    isSeleniumServerRunning = false,
-    tunnel = null,
+var SauceLabs   = require('saucelabs'),
+    SauceTunnel = require('sauce-tunnel'),
+    selenium    = require('selenium-standalone'),
+    webdriverjs = require('webdriverjs'),
+    util        = require('util'),
+    http        = require('http'),
+    async       = require('async'),
+    hooker      = require('hooker'),
+    path        = require('path'),
+    fs          = require('fs-extra'),
+    deepmerge   = require('deepmerge'),
+    server      = null,
+    tunnel      = null,
+    isHookedUp  = false,
     isSauceTunnelRunning = false,
-    isHookedUp = false;
+    isSeleniumServerRunning = false;
 
 module.exports = function(grunt) {
 
-    grunt.registerMultiTask('webdriver-jasmine', 'run WebdriverJS tests', function() {
+    grunt.registerMultiTask('webdriver_jasmine', 'run WebdriverJS jasmine tests', function() {
 
         var that = this,
             done = this.async(),
@@ -32,6 +32,7 @@ module.exports = function(grunt) {
 
                 // jasmine options
                 projectRoot: '',
+                specFolders: [],
                 match: '.',
                 matchall: false,
                 specNameMatcher: 'spec',
@@ -64,16 +65,7 @@ module.exports = function(grunt) {
         /**
          * initialize Jasmine test suite
          */
-        grunt.file.setBase(base);
-        var specFolders = grunt.file.expand({
-            filter: function( filepath ) {
-              return grunt.file.isDir( filepath );
-            }
-        }, this.data.tests);
-
-        // Config jasmine options
-        var jasmineOptions = capabilities.jasmineOptions;
-        options.specFolders = specFolders;
+        options.specFolders = grunt.util._.union(options.specFolders, this.filesSrc);
 
         if (options.projectRoot) {
             options.specFolders.push(options.projectRoot);
@@ -86,7 +78,7 @@ module.exports = function(grunt) {
             });
         }
 
-        jasmineOptions = {
+        var jasmineOptions = {
             specFolders: options.specFolders,
             isVerbose: grunt.verbose ? true : options.verbose,
             showColors: options.showColors,
@@ -247,7 +239,7 @@ module.exports = function(grunt) {
                     var line = output.toString().trim();
 
                     grunt.log.debug(line);
-                    if (line.indexOf('Started HttpContext[/wd,/wd]') > -1) {
+                    if (line && line.indexOf('Started HttpContext[/wd,/wd]') > -1) {
                         grunt.log.debug('selenium server started successfully');
                         isSeleniumServerRunning = true;
                         server.stdout.removeAllListeners('data');
