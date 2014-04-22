@@ -222,8 +222,9 @@ describe('grunt-webdriverjs test', function () {
             .getTitle(function(err,title) {
 				expect(title.indexOf('grunt-webdriver')).not.toBe(-1);
 				expect(err).toBe(null);
+				done();
             })
-            .end(done);
+            .end();
 
     });
 
