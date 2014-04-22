@@ -275,12 +275,12 @@ module.exports = function(grunt) {
                     callback(null, runner.results().failedCount);
                 };
 
-                options.onComplete = onJasmineComplete;
+                jasmineOptions.onComplete = onJasmineComplete;
 
                 // for jasmine-node 1.3
                 testSuite.executeSpecsInFolder(jasmineOptions);
                 // for jasmine-node 2
-                // options.watchFolders = [ ];
+                // jasmineOptions.watchFolders = [ ];
                 // testSuite.run( jasmineOptions );
             },
 
