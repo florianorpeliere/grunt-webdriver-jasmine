@@ -2,7 +2,7 @@
 
 > grunt-webdriver-jasmine is a grunt plugin to run selenium tests with Jasmine and [WebdriverJS](http://webdriver.io)
 
-This plugin is based on [grunt-webdriver](https://github.com/webdriverjs/grunt-webdriver) and [grunt-jasmine-node](https://github.com/jasmine-contrib/grunt-jasmine-node).
+This plugin is based on [grunt-webdriver](https://github.com/webdriverio/grunt-webdriver) and [grunt-jasmine-node](https://github.com/jasmine-contrib/grunt-jasmine-node).
 
 ## Getting Started
 This plugin requires Grunt `~0.4.0`
@@ -30,19 +30,22 @@ grunt.loadNpmTasks('grunt-webdriver-jasmine');
 In your project's Gruntfile, add a section named `webdriver-jasmine` to the data
 object passed into `grunt.initConfig()`.
 
-_Run this task with the `grunt webdriver-jasmine` command._
+Run this task with the `grunt webdriver_jasmine` command.
 
 ```js
 grunt.initConfig({
-  'webdriver-jasmine': {
+  webdriver_jasmine: {
     options: {
+        extensions: 'js', //the extension of your spec files
+      	specNameMatcher: 'spec', // used to regex spec files
         desiredCapabilities: {
             browserName: 'chrome'
         }
     },
     login: {
-        tests: ['test/spec/login/*.js'],
         options: {
+            // folder where tests are located
+            specFolders: ['test/spec/login'],
             // overwrite default settings
             desiredCapabilities: {
                 browserName: 'firefox'
@@ -50,7 +53,8 @@ grunt.initConfig({
         }
     },
     form: {
-        tests: ['test/spec/form/*.js']
+    	// folder where tests are located
+        specFolders: ['test/spec/form']
     }
     // ...
   },
@@ -64,7 +68,7 @@ will automatically try to establish a tunnel connection via [Sauce Connect](http
 
 ```js
 grunt.initConfig({
-  webdriver: {
+  webdriver_jasmine: {
     options: {
         host: 'ondemand.saucelabs.com',
         port: 80,
@@ -78,10 +82,10 @@ grunt.initConfig({
         }
     },
     login: {
-        tests: ['test/spec/login/*.js']
+        specFolders: ['test/spec/login']
     },
     form: {
-        tests: ['test/spec/form/*.js']
+        specFolders: ['test/spec/form']
     }
     // ...
   },
@@ -95,6 +99,8 @@ you can define your driver instance. You'll find more informations about all Web
 options [here](https://github.com/camme/webdriverjs/#options). You can overwrite these
 options in any target. Additionally you can define several task and jasmine options.The
 following are supported:
+
+Your options are also passed into [grunt-jasmine-node](https://github.com/jasmine-contrib/grunt-jasmine-node) so you can specify any of the Jasmine Node options available [here](https://github.com/jasmine-contrib/grunt-jasmine-node#options)
 
 #### task specific options
 
@@ -206,7 +212,7 @@ grunt.initConfig({
 
 The corresponding *Hello World* test script is using WebdriverJS API to search the
 grunt-webdriver-jasmine repository on GitHub. The global `browser` variable lets you access
-your client instance. See more functions and test examples in the [WebdriverJS](https://github.com/Camme/webdriverjs) repository.
+your client instance. See more functions and test examples in the [WebdriverIO](https://github.com/Camme/webdriverjs) repository.
 
 ```js
 'use strict';
@@ -222,8 +228,9 @@ describe('grunt-webdriverjs test', function () {
             .getTitle(function(err,title) {
 				expect(title.indexOf('grunt-webdriver')).not.toBe(-1);
 				expect(err).toBe(null);
+				done();
             })
-            .end(done);
+            .end();
 
     });
 

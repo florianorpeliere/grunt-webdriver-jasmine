@@ -1,7 +1,7 @@
 {
   "name": "grunt-webdriver-jasmine",
   "description": "grunt-webdriver is a grunt plugin to run selenium tests with Jasmine and WebdriverJS",
-  "version": "0.5.0",
+  "version": "0.1.0",
   "homepage": "https://github.com/webdriverio/grunt-webdriver-jasmine",
   "author": {
     "name": "Christian Bromann",

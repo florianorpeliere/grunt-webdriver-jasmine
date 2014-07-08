@@ -7,8 +7,9 @@ describe('grunt-webdriverjs test', function () {
             .getTitle(function(err,title) {
                 expect(err).toBe(null);
 				expect(title).toBe('WebdriverJS Testpage');
+				done();
             })
-            .end(done);
+            .end();
 
     });
 
