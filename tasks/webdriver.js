@@ -1,7 +1,7 @@
 var SauceLabs = require('saucelabs'),
     SauceTunnel = require('sauce-tunnel'),
     selenium = require('selenium-standalone'),
-    webdriverjs = require('webdriverjs'),
+    webdriverjs = require('webdriverio'),
     util = require('util'),
     http = require('http'),
     async = require('async'),
