@@ -1,4 +1,4 @@
-module.exports = function(grunt) {
+module.exports = function (grunt) {
 
     // Project configuration.
     grunt.initConfig({
@@ -6,12 +6,12 @@ module.exports = function(grunt) {
         // Configuration to be run (and then tested).
         webdriver_jasmine: {
             options: {
-                updateSauceJob: true,
-                user: process.env.SAUCE_USERNAME,
-                key: process.env.SAUCE_ACCESS_KEY,
+                //updateSauceJob: true,
+                //user: process.env.SAUCE_USERNAME,
+                //key: process.env.SAUCE_ACCESS_KEY,
                 logLevel: 'verbose',
                 desiredCapabilities: {
-                    browserName: 'phantomjs'
+                    browserName: 'chrome'
                 }
             },
             chrome_ci: {
@@ -22,7 +22,7 @@ module.exports = function(grunt) {
                         browserName: 'chrome',
                         platform: 'Windows 8',
                         version: '31',
-                        tags: ['chrome','Windows 8','31'],
+                        tags: ['chrome', 'Windows 8', '31'],
                         name: 'grunt-webdriver test',
                         build: process.env.TRAVIS_BUILD_NUMBER || '008'
                     }
@@ -35,7 +35,7 @@ module.exports = function(grunt) {
                         browserName: 'chrome',
                         platform: 'Windows 8',
                         version: '31',
-                        tags: ['chrome','Windows 8','31','sauce connect'],
+                        tags: ['chrome', 'Windows 8', '31', 'sauce connect'],
                         'tunnel-identifier': process.env.TRAVIS_JOB_NUMBER,
                         name: 'grunt-webdriver test',
                         build: process.env.TRAVIS_BUILD_NUMBER
@@ -54,6 +54,6 @@ module.exports = function(grunt) {
     grunt.registerTask('default', ['jshint', 'webdriver']);
     // default task for testing
     grunt.registerTask('test', ['webdriver_jasmine:local']);
-    grunt.registerTask('testTravis', ['webdriver_jasmine:chrome_ci' ,'webdriver_jasmine:chrome_ciTunnel']);
+    grunt.registerTask('testTravis', ['webdriver_jasmine:chrome_ci', 'webdriver_jasmine:chrome_ciTunnel']);
 
 };

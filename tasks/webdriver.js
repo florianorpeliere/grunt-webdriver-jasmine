@@ -15,9 +15,9 @@ var SauceLabs = require('saucelabs'),
     isSauceTunnelRunning = false,
     isSeleniumServerRunning = false;
 
-module.exports = function(grunt) {
+module.exports = function (grunt) {
 
-   grunt.registerMultiTask('webdriver_jasmine', 'run WebdriverJS jasmine tests', function () {
+    grunt.registerMultiTask('webdriver_jasmine', 'run WebdriverJS jasmine tests', function () {
 
         var that = this,
             done = this.async(),
@@ -205,7 +205,7 @@ module.exports = function(grunt) {
                      * starts selenium standalone server if its not running
                      */
                     server = selenium.start({
-                        stdio: 'pipe'
+                       stdio: 'pipe'
                     });
 
                     /**
@@ -217,9 +217,7 @@ module.exports = function(grunt) {
 
                 }
                 else {
-
                     callback(null, true);
-
                 }
 
             },
@@ -259,9 +257,7 @@ module.exports = function(grunt) {
 
                 }
                 else {
-
                     callback(null);
-
                 }
 
             },
