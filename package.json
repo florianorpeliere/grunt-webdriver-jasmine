@@ -32,10 +32,10 @@
   "dependencies": {
     "async": "^0.7.0",
     "jasmine-node": "~1.14.3",
-    "webdriverio": "^2.4.x",
+    "webdriverio": "^2.4.5",
     "saucelabs": "^0.1.1",
     "sauce-tunnel": "^2.0.1",
-    "selenium-standalone": "^2.44",
+    "selenium-standalone": "^4.4.0",
     "deepmerge": "^0.2.7",
     "hooker": "^0.2.3",
     "path": "^0.4.9",

@@ -171,11 +171,44 @@ module.exports = function (grunt) {
 
                 http.get(options, function () {
                     isSeleniumServerRunning = true;
-                    callback(null);
+                    callback();
                 }).on('error', function () {
-                    callback(null);
+                    callback();
                 });
 
+            },
+
+            /**
+             * Verification de l'installation
+             */
+            function (callback) {
+
+                grunt.log.debug('install drivers');
+
+                selenium.install({
+                    // check for more recent versions of selenium here:
+                    // http://selenium-release.storage.googleapis.com/index.html
+                    version: '2.45.0',
+                    baseURL: 'http://selenium-release.storage.googleapis.com',
+                    drivers: {
+                        chrome: {
+                            // check for more recent versions of chrome driver here:
+                            // http://chromedriver.storage.googleapis.com/index.html
+                            version: '2.15',
+                            arch: process.arch,
+                            baseURL: 'http://chromedriver.storage.googleapis.com'
+                        },
+                        ie: {
+                            // check for more recent versions of internet explorer driver here:
+                            // http://selenium-release.storage.googleapis.com/index.html
+                            version: '2.45',
+                            arch: process.arch,
+                            baseURL: 'http://selenium-release.storage.googleapis.com'
+                        }
+                    }
+                }, function (err) {
+                    callback();
+                });
             },
 
             /**
@@ -204,15 +237,17 @@ module.exports = function (grunt) {
                     /**
                      * starts selenium standalone server if its not running
                      */
-                    server = selenium.start({
-                       stdio: 'pipe'
-                    });
 
-                    /**
-                     * listen on server output
-                     */
-                    ['stderr', 'stdout'].forEach(function (output) {
-                        server[output].on('data', next.bind(callback));
+                    selenium.start({
+                       spawnOptions: { stdio: 'pipe' },
+                       seleniumArgs: ['-debug']
+                    }, function (err, child) {
+                        if (err) {
+                            done(err);
+                            return;
+                        }
+                        server = child;
+                        callback(null, true);
                     });
 
                 }
@@ -226,7 +261,6 @@ module.exports = function (grunt) {
              * check if server is ready
              */
             function (output, callback) {
-
                 if (tunnel && !isSauceTunnelRunning) {
 
                     // output here means if tunnel was created successfully
@@ -236,28 +270,17 @@ module.exports = function (grunt) {
 
                     grunt.log.debug('tunnel created successfully');
                     isSauceTunnelRunning = true;
-                    callback(null);
+                    callback();
 
                 }
                 else if (server && !isSeleniumServerRunning && !options.nospawn) {
-
-                    var line = output.toString().trim();
-
-                    grunt.log.debug(line);
-                    if (line && line.indexOf('Started HttpContext[/wd,/wd]') > -1) {
-                        grunt.log.debug('selenium server started successfully');
-                        isSeleniumServerRunning = true;
-
-                        ['stderr', 'stdout'].forEach(function (output) {
-                            server[output].removeAllListeners('data');
-                        });
-
-                        callback(null);
-                    }
-
+                     grunt.log.debug('selenium server started successfully');
+                     isSeleniumServerRunning = true;
+                     //server
+                     callback();
                 }
                 else {
-                    callback(null);
+                    callback();
                 }
 
             },
@@ -266,7 +289,7 @@ module.exports = function (grunt) {
              * init WebdriverJS instance
              */
             function (callback) {
-                grunt.log.debug('init WebdriverJS instance');
+                grunt.log.debug('init WebdriverJS instance ' + server);
 
                 GLOBAL.browser.init().call(next.bind(callback));
             },
@@ -275,7 +298,7 @@ module.exports = function (grunt) {
              * run tests
              */
             function (args, callback) {
-                grunt.log.debug('run tests with jasmine');
+                grunt.log.debug('run tests with jasmine ' + server);
 
                 // jasmine
                 var onJasmineComplete = function (runner, log) {
@@ -356,7 +379,7 @@ module.exports = function (grunt) {
              */
             function (args, callback) {
                 grunt.log.debug('finish grunt task', args);
-
+                server.kill();
                 if (isLastTask) {
 
                     // close the file if it was opened
@@ -368,7 +391,6 @@ module.exports = function (grunt) {
                     hooker.unhook(process.stdout, 'write');
 
                 }
-
                 done(args);
                 callback();
             }
