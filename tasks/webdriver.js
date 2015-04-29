@@ -1,7 +1,7 @@
 var SauceLabs = require('saucelabs'),
     SauceTunnel = require('sauce-tunnel'),
     selenium = require('selenium-standalone'),
-    webdriverjs = require('webdriverio'),
+    webdriverjs,
     util = require('util'),
     http = require('http'),
     async = require('async'),
@@ -41,6 +41,7 @@ module.exports = function (grunt) {
                 showColors: true,
                 includeStackTrace: true,
                 useHelpers: false,
+                angular: false,
                 verbose: false,
                 jUnit: {
                     report: false,
@@ -54,6 +55,12 @@ module.exports = function (grunt) {
             tunnelFlags = (capabilities.desiredCapabilities ? capabilities.desiredCapabilities['tunnel-flags'] : []) || [],
             isLastTask = grunt.task._queue.length - 2 === 0,
             fd;
+		
+		if(options.angular){
+			webdriverjs = require('webdriverjs-angular');
+		}else{
+			webdriverjs = require('webdriverio');
+		}
 
         /**
          * initialize WebdriverJS
@@ -276,7 +283,6 @@ module.exports = function (grunt) {
                 else if (server && !isSeleniumServerRunning && !options.nospawn) {
                      grunt.log.debug('selenium server started successfully');
                      isSeleniumServerRunning = true;
-                     //server
                      callback();
                 }
                 else {
@@ -289,7 +295,7 @@ module.exports = function (grunt) {
              * init WebdriverJS instance
              */
             function (callback) {
-                grunt.log.debug('init WebdriverJS instance ' + server);
+                grunt.log.debug('init WebdriverJS instance');
 
                 GLOBAL.browser.init().call(next.bind(callback));
             },
@@ -298,7 +304,7 @@ module.exports = function (grunt) {
              * run tests
              */
             function (args, callback) {
-                grunt.log.debug('run tests with jasmine ' + server);
+                grunt.log.debug('run tests with jasmine');
 
                 // jasmine
                 var onJasmineComplete = function (runner, log) {

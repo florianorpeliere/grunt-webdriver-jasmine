@@ -10,6 +10,7 @@ module.exports = function (grunt) {
                 //user: process.env.SAUCE_USERNAME,
                 //key: process.env.SAUCE_ACCESS_KEY,
                 logLevel: 'verbose',
+    			angular: true,
                 desiredCapabilities: {
                     browserName: 'chrome'
                 }
